@@ -12,9 +12,33 @@ export class UserService {
     return newUser;
   }
 
-  static async getAllTasks() {
+  static async getAllUsers() {
     const user = await User.find().sort({ createUser: "desc" }); // sắp xếp giảm dần theo createAt
 
     return user;
+  }
+
+  static async getByIdUser(id: string) {
+    const user = await User.findById(id);
+    if (!user) {
+      throw new Error("User not found");
+    }
+    console.log("ID:", id);
+    console.log("User:", user);
+
+    return user;
+  }
+
+  static async updateUser(id: string, body: any) {
+    const { email, isActive } = body;
+    const updatedUser = await User.findByIdAndUpdate(
+      id,
+      { email, isActive },
+      { new: true }
+    );
+    if (!updatedUser) {
+      throw new Error("User not found");
+    }
+    return updatedUser;
   }
 }
