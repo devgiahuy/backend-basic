@@ -27,7 +27,7 @@ async function bootstrap() {
   app.use("/api", userRoutes);
 
   app.listen(PORT, () => {
-    console.log(`🚀 Server running at http://localhost:${PORT}`);
+    console.log(`Server running at http://localhost:${PORT}`);
   });
 }
 

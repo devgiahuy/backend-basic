@@ -1,44 +1,55 @@
-import User from "../models/User";
+import { updateUser, UserRepository } from "./../repositories/userRepository";
+import User, { IUser } from "../models/User";
 
 export class UserService {
-  static async createUser(email: string) {
-    // Business rule
-    const existed = await User.findOne({ email });
-    if (existed) {
-      throw new Error("User already exists");
+  constructor(private userRepository: UserRepository) {}
+
+  // static async createUser(email: string) {
+  //   if (email.includes("@")) {
+  //     throw new Error("Email already exists");
+  //   }
+
+  //   const user = new User({ email });
+  //   const newUser = await user.save();
+  //   return newUser;
+  // }
+
+  async createUser(email: string) {
+    if (!email.includes("@")) {
+      throw new Error("Email already exists");
     }
-    const user = new User({ email });
-    const newUser = await user.save();
-    return newUser;
-  }
 
-  static async getAllUsers() {
-    const user = await User.find().sort({ createUser: "desc" }); // sắp xếp giảm dần theo createAt
-
-    return user;
-  }
-
-  static async getByIdUser(id: string) {
-    const user = await User.findById(id);
-    if (!user) {
-      throw new Error("User not found");
+    const isExits = await User.findOne({ email });
+    if (isExits) {
+      throw new Error("Email already exists");
     }
-    console.log("ID:", id);
-    console.log("User:", user);
 
-    return user;
+    return this.userRepository.createUser(email);
   }
 
-  static async updateUser(id: string, body: any) {
+  async getAllUsers() {
+    const users = await this.userRepository.getAllUser();
+    return users;
+  }
+
+  async getByIdUser(id: string) {
+    return await this.userRepository.getByIdUser(id);
+  }
+
+  async updateUser(id: string, body: updateUser): Promise<IUser> {
     const { email, isActive } = body;
-    const updatedUser = await User.findByIdAndUpdate(
-      id,
-      { email, isActive },
-      { new: true }
-    );
-    if (!updatedUser) {
+    const IsExits = await User.findById(id);
+    if (!IsExits) {
       throw new Error("User not found");
     }
-    return updatedUser;
+    return this.updateUser(id, body);
+  }
+
+  async deleteUser(id: string) {
+    const deletedUser = await User.findById(id);
+    if (!deletedUser) {
+      throw new Error("User not found");
+    }
+    return deletedUser;
   }
 }

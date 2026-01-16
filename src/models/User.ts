@@ -1,7 +1,11 @@
 import mongoose, { Schema, model, Document } from "mongoose";
-/**
- * Schema dùng cho MongoDB
- */
+
+export interface IUser extends Document {
+  email: string;
+  isActive: boolean;
+  createAt: Date;
+}
+
 const UserSchema = new Schema(
   {
     email: {
@@ -15,6 +19,11 @@ const UserSchema = new Schema(
     isActive: {
       type: Boolean,
       default: true,
+    },
+
+    createAt: {
+      type: Date,
+      default: Date.now,
     },
   },
   {
